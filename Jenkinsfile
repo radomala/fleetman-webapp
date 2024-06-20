@@ -14,7 +14,7 @@ pipeline {
       stage('Preparation') {
          steps {
             cleanWs()
-            git credentialsId: 'GitHub', url: "https://github.com/radomala/fleetman-webapp"
+            git credentialsId: 'Identification_github', url: "https://github.com/radomala/fleetman-webapp"
          }
       }
       stage('Build') {
