@@ -18,6 +18,10 @@ RUN apk --no-cache add python3 py3-pip ca-certificates && \
     update-ca-certificates && \
     pip3 install --trusted-host pypi.python.org j2cli[yaml]
 
+RUN apk --no-cache add python2 py2-pip ca-certificates && \
+    update-ca-certificates && \
+    pip2 install --trusted-host pypi.python.org j2cli[yaml]
+
 RUN apk add --update bash && rm -rf /var/cache/apk/*
 
 COPY --from=build /dist/fleetman-webapp /usr/share/nginx/html
