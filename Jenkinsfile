@@ -63,18 +63,18 @@ pipeline {
       }
    }
 
-    post {
-        always {
+  //  post {
+  //   always {
             // Déconnexion de Docker Hub
-            script {
-                docker.withRegistry('', 'GitHub_id_pwd') {
-                    docker.logout()
-                }
-            }
+           //script {
+               // docker.withRegistry('', 'GitHub_id_pwd') {
+                 //   docker.logout()
+              //  }
+           // }
         }
-        cleanup {
+       // cleanup {
             // Nettoyer les images Docker locales (facultatif)
-            sh "docker rmi $REPOSITORY_TAG"
-        }
-    }
+       //     sh "docker rmi $REPOSITORY_TAG"
+     //   }
+   // }
 }
