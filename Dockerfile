@@ -3,15 +3,6 @@ FROM node:14 AS build
 
 WORKDIR /app
 
-RUN apk --no-cache add \
-      python2 \
-      py2-pip && \
-    pip2 install j2cli[yaml]
-
-RUN apk add --update bash && rm -rf /var/cache/apk/*
-
-RUN rm -rf /usr/share/nginx/html/*
-
 COPY package.json package-lock.json ./
 RUN npm install
 
@@ -20,6 +11,15 @@ RUN npm run build --prod
 
 # Étape 2 : Utiliser une image nginx pour servir l'application Angular
 FROM nginx:alpine
+
+RUN apk --no-cache add \
+      python2 \
+      py2-pip && \
+    pip2 install j2cli[yaml]
+
+RUN apk add --update bash && rm -rf /var/cache/apk/*
+
+RUN rm -rf /usr/share/nginx/html/*
 
 #COPY --from=build /dist/fleetman-webapp /usr/share/nginx/html
 COPY /app/dist/fleetman-webapp /usr/share/nginx/html
