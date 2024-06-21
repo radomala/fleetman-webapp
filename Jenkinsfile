@@ -29,16 +29,8 @@ pipeline {
       //          sh 'ng build --prod'
       //      }
      // }
-       stage('Construire image') {
-         steps {
-            script { 
-              sh 'docker image build -t ${REPOSITORY_TAG} .'
-            }
-        }
-      }
-      
-      
-      stage('Login to Docker Hub') {
+
+     stage('Login to Docker Hub') {
          steps {
                // Se connecter à Docker Hub en utilisant les identifiants sécurisés stockés dans Jenkins
             script {
@@ -49,13 +41,25 @@ pipeline {
             }
       }
       
-
-        stage('Push  Image in hubdocker') {
-            steps {
-                // Pousser l'image Docker vers Docker Hub
-                sh 'docker push ${REPOSITORY_TAG}'
-            }
+       stage('Construire image') {
+         steps {
+          dockerImage = 'docker image build -t ${REPOSITORY_TAG} .'
+          dockerImage.push()
         }
+      }
+      
+      
+   
+      
+
+      stage('Push  Image in hubdocker') {
+            steps {
+               script {
+                // Pousser l'image Docker vers Docker Hub
+                 bat 'docker push ${REPOSITORY_TAG}'
+                }
+            }
+      }
       stage('Deploy to Cluster') {
           steps {
             sh 'envsubst < ${WORKSPACE}/deploy.yaml | kubectl apply -f -'
