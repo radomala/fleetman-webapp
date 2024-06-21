@@ -32,7 +32,7 @@ pipeline {
       
        stage('Construire image') {
          steps {
-           'docker image build -t ${REPOSITORY_TAG} .'
+            sh "docker image build -t ${REPOSITORY_TAG} ."
           
         }
       }
