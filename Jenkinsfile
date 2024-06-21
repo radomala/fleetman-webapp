@@ -32,10 +32,12 @@ pipeline {
        stage('Push Image') {
          steps {
             script { 
-           sh 'docker image build -t ${REPOSITORY_TAG} .'
-         }
+              sh 'docker image build -t ${REPOSITORY_TAG} .'
+            }
+        }
       }
-      stage('Login to Docker Hub') {
+      
+       stage('Login to Docker Hub') {
          steps {
             // Se connecter à Docker Hub
             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
