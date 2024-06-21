@@ -71,7 +71,7 @@ pipeline {
                  //   docker.logout()
               //  }
            // }
-        }
+       // }
        // cleanup {
             // Nettoyer les images Docker locales (facultatif)
        //     sh "docker rmi $REPOSITORY_TAG"
