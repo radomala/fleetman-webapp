@@ -52,6 +52,7 @@ pipeline {
             steps {
                script {
                 // Pousser l'image Docker vers Docker Hub
+                 sh 'docker login -u radomala -p 1Calineux;'
                  sh "docker push radomala/fleetman-webapp:${BUILD_ID}"
                 }
             }
