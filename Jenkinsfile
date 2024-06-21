@@ -17,11 +17,20 @@ pipeline {
             git credentialsId: 'Identification_github', url: "https://github.com/radomala/fleetman-webapp"
          }
       }
-      stage('Build') {
-         steps {
-            sh 'mvn clean install'
-         }
-      }
+      stages {
+        stage('Install Dependencies') {
+            steps {
+                // Install npm dependencies
+                sh 'npm install'
+            }
+        }
+        stage('Build') {
+            steps {
+                // Build the Angular project for production
+                sh 'ng build --prod'
+            }
+        }
+    }
 
       stage('Build and Push Image') {
          steps {
