@@ -13,7 +13,17 @@ pipeline {
             cleanWs()
             git credentialsId: 'Identification_github', url: "https://github.com/radomala/fleetman-webapp"
          }
-      }      
+      }
+
+      stage('Build') {
+            steps {
+                script {
+                    // Builder l'application Angular
+                    sh 'npm install'
+                    sh 'npm run build --prod'
+                }
+            }
+        }      
        stage('Construire image') {
          steps {
             sh "docker image build -t ${REPOSITORY_TAG} ."
@@ -25,24 +35,25 @@ pipeline {
          steps {
                // Se connecter à Docker Hub en utilisant les identifiants sécurisés stockés dans Jenkins
             script {
-                  //   docker.withRegistry('https://registry.hub.docker.com', 'GitHub_id_pwd') {
-                  sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                  }
-                }
+               withCredentials([string(credentialsId: 'IDENTIFICATION_HUBDOCKER', variable: 'DOCKER_HUB_PASSWORD')]) {
+            
+               sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+               // sh 'echo $DOCKER_HUB_PASSWORD | docker login -u  --password-stdin'
+               sh "docker push radomala/fleetman-webapp:${BUILD_ID}"
+               }
+            }
+         }
       }
 
-      stage('Push  Image in hubdocker') {
+      stage('Deploy to Kubernetes') {
             steps {
-               script {
-                  sh "docker push radomala/fleetman-webapp:${BUILD_ID}"
+                script {
+                    // Déployer sur Kubernetes
+                    sh 'kubectl apply -f k8s-deployment.yaml'
+                    sh 'kubectl apply -f k8s-service.yaml'
                 }
             }
-      }
-      stage('Deploy to Cluster') {
-          steps {
-            sh 'envsubst < ${WORKSPACE}/deploy.yaml | kubectl apply -f -'
-          }
-      }
+        }
    }
 
  }

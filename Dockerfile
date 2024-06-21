@@ -1,22 +1,23 @@
-FROM nginx:1.14.0-alpine
+# Étape 1 : Utiliser une image node pour builder l'application Angular
+FROM node:14 AS build
 
-MAINTAINER Richard Chesterwood "richard@inceptiontraining.co.uk"
+WORKDIR /app
 
-RUN apk --no-cache add \
-      python2 \
-      py2-pip && \
-    pip2 install j2cli[yaml]
+COPY package.json package-lock.json ./
+RUN npm install
 
-RUN apk add --update bash && rm -rf /var/cache/apk/*
+COPY ../
+RUN npm run build --prod
 
-RUN rm -rf /usr/share/nginx/html/*
+# Étape 2 : Utiliser une image nginx pour servir l'application Angular
+FROM nginx:alpine
 
-COPY /dist /usr/share/nginx/html
+#COPY --from=build /dist/fleetman-webapp /usr/share/nginx/html
+COPY /app/dist/fleetman-webapp /usr/share/nginx/html
 
-COPY nginx.conf.j2 /templates/
+# Copier le fichier de configuration Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY docker-entrypoint.sh /
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
