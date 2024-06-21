@@ -13,11 +13,15 @@ RUN npm run build --prod
 FROM nginx:alpine
 
 # Installer Python 3 et j2cli
-RUN apk --no-cache add python3 py3-pip && \
-    pip3 install j2cli[yaml]
+# Installer les dépendances nécessaires, y compris Python 3 et j2cli
+RUN apk --no-cache add python3 py3-pip ca-certificates && \
+    update-ca-certificates && \
+    pip3 install --trusted-host pypi.python.org j2cli[yaml]
 
-RUN apk --no-cache add python2 py2-pip && \
-    pip2 install j2cli[yaml]
+# Installer les dépendances nécessaires, y compris Python 3 et j2cli
+RUN apk --no-cache add python3 py3-pip ca-certificates && \
+    update-ca-certificates && \
+    pip3 install --trusted-host pypi.python.org j2cli[yaml]
 
 RUN apk add --update bash && rm -rf /var/cache/apk/*
 
