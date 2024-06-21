@@ -6,23 +6,17 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
-COPY ../
+COPY . ./
 RUN npm run build --prod
 
 # Étape 2 : Utiliser une image nginx pour servir l'application Angular
 FROM nginx:alpine
 
-RUN apk --no-cache add \
-      python2 \
-      py2-pip && \
-    pip2 install j2cli[yaml]
+# Installer Python 3 et j2cli
+RUN apk --no-cache add python3 py3-pip && \
+    pip3 install j2cli[yaml]
 
-RUN apk add --update bash && rm -rf /var/cache/apk/*
-
-RUN rm -rf /usr/share/nginx/html/*
-
-#COPY --from=build /dist/fleetman-webapp /usr/share/nginx/html
-COPY /app/dist/fleetman-webapp /usr/share/nginx/html
+COPY --from=build /dist/fleetman-webapp /usr/share/nginx/html
 
 # Copier le fichier de configuration Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
