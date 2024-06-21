@@ -29,7 +29,7 @@ pipeline {
       //          sh 'ng build --prod'
       //      }
      // }
-       stage('Push Image') {
+       stage('Construire image') {
          steps {
             script { 
               sh 'docker image build -t ${REPOSITORY_TAG} .'
@@ -37,14 +37,20 @@ pipeline {
         }
       }
       
-       stage('Login to Docker Hub') {
+      
+      stage('Login to Docker Hub') {
          steps {
-            // Se connecter à Docker Hub
-            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+               // Se connecter à Docker Hub en utilisant les identifiants sécurisés stockés dans Jenkins
+            script {
+               docker.withRegistry('https://registry.hub.docker.com', 'GitHub_id_pwd') {
+                        // No operation here, just ensure credentials are configured correctly
+                  }
+                }
             }
-        }
+      }
+      
 
-        stage('Push Docker Image') {
+        stage('Push  Image in hubdocker') {
             steps {
                 // Pousser l'image Docker vers Docker Hub
                 sh 'docker push $REPOSITORY_TAG'
@@ -56,4 +62,19 @@ pipeline {
           }
       }
    }
+
+    post {
+        always {
+            // Déconnexion de Docker Hub
+            script {
+                docker.withRegistry('', 'GitHub_id_pwd') {
+                    docker.logout()
+                }
+            }
+        }
+        cleanup {
+            // Nettoyer les images Docker locales (facultatif)
+            sh "docker rmi $REPOSITORY_TAG"
+        }
+    }
 }
