@@ -52,7 +52,7 @@ pipeline {
             steps {
                script {
                 // Pousser l'image Docker vers Docker Hub
-                 bat "docker push radomala/fleetman-webapp:${BUILD_ID}"
+                 bat "docker push radomala/fleetman-webapp"
                 }
             }
       }
