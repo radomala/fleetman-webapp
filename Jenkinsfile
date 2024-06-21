@@ -32,7 +32,7 @@ pipeline {
        stage('Construire image') {
          steps {
             script { 
-              sh 'docker image build -t $REPOSITORY_TAG'
+              sh 'docker image build -t ${REPOSITORY_TAG} .
             }
         }
       }
@@ -53,7 +53,7 @@ pipeline {
         stage('Push  Image in hubdocker') {
             steps {
                 // Pousser l'image Docker vers Docker Hub
-                bat 'docker push ${REPOSITORY_TAG}'
+                sh 'docker push ${REPOSITORY_TAG}'
             }
         }
       stage('Deploy to Cluster') {
