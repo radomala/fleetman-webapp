@@ -1,32 +1,22 @@
-# Étape 1 : Construction de l'application Angular
-FROM node:14 AS build
+FROM nginx:1.14.0-alpine
 
-# Définir le répertoire de travail dans le conteneur
-WORKDIR /app
+MAINTAINER Richard Chesterwood "richard@inceptiontraining.co.uk"
 
-# Copier les fichiers package.json et package-lock.json
-COPY package*.json ./
+RUN apk --no-cache add \
+      python2 \
+      py2-pip && \
+    pip2 install j2cli[yaml]
 
-# Installer les dépendances
-RUN npm install
+RUN apk add --update bash && rm -rf /var/cache/apk/*
 
-# Copier le reste des fichiers de l'application
-COPY . .
+RUN rm -rf /usr/share/nginx/html/*
 
-# Builder l'application Angular
-RUN npm run build --prod
+COPY /dist /usr/share/nginx/html
 
-# Étape 2 : Serveur Nginx pour les fichiers construits
-FROM nginx:alpine
+COPY nginx.conf.j2 /templates/
 
-# Copier les fichiers construits depuis l'image de build
-COPY --from=build /app/dist/nom-de-votre-projet /usr/share/nginx/html
+COPY docker-entrypoint.sh /
 
-# Copier la configuration par défaut de Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
-# Exposer le port 80
-EXPOSE 80
-
-# Démarrer Nginx
 CMD ["nginx", "-g", "daemon off;"]
