@@ -53,7 +53,7 @@ pipeline {
         stage('Push  Image in hubdocker') {
             steps {
                 // Pousser l'image Docker vers Docker Hub
-                sh 'docker push $REPOSITORY_TAG'
+                bat 'docker push $REPOSITORY_TAG'
             }
         }
       stage('Deploy to Cluster') {
