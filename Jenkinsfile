@@ -29,8 +29,15 @@ pipeline {
       //          sh 'ng build --prod'
       //      }
      // }
+      
+       stage('Construire image') {
+         steps {
+           'docker image build -t ${REPOSITORY_TAG} .'
+          
+        }
+      }
 
-     stage('Login to Docker Hub') {
+       stage('Login to Docker Hub') {
          steps {
                // Se connecter à Docker Hub en utilisant les identifiants sécurisés stockés dans Jenkins
             script {
@@ -40,23 +47,12 @@ pipeline {
                 }
             }
       }
-      
-       stage('Construire image') {
-         steps {
-          dockerImage = 'docker image build -t ${REPOSITORY_TAG} .'
-          dockerImage.push()
-        }
-      }
-      
-      
-   
-      
 
       stage('Push  Image in hubdocker') {
             steps {
                script {
                 // Pousser l'image Docker vers Docker Hub
-                 bat 'docker push ${REPOSITORY_TAG}'
+                 bat "docker push radomala/fleetman-webapp:${BUILD_ID}"
                 }
             }
       }
