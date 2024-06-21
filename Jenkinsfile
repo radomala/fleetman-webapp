@@ -41,8 +41,9 @@ pipeline {
          steps {
                // Se connecter à Docker Hub en utilisant les identifiants sécurisés stockés dans Jenkins
             script {
-               docker.withRegistry('https://registry.hub.docker.com', 'GitHub_id_pwd') {
+            //   docker.withRegistry('https://registry.hub.docker.com', 'GitHub_id_pwd') {
                         // No operation here, just ensure credentials are configured correctly
+                  sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                   }
                 }
             }
@@ -52,7 +53,7 @@ pipeline {
             steps {
                script {
                 // Pousser l'image Docker vers Docker Hub
-                 sh 'docker login -u radomala -p 1Calineux;'
+             //    sh 'docker login -u radomala -p 1Calineux;'
                  sh "docker push radomala/fleetman-webapp:${BUILD_ID}"
                 }
             }
