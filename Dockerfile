@@ -10,24 +10,18 @@ COPY . ./
 RUN npm run build --prod
 
 # Étape 2 : Utiliser une image nginx pour servir l'application Angular
-FROM nginx:alpine
+FROM nginx:1.14.0-alpine
 
+MAINTAINER Richard Chesterwood "richard@inceptiontraining.co.uk"
 
-# Install dependencies
 RUN apk --no-cache add \
-      python3 \
-      py3-pip \
-      ca-certificates \
-      && pip3 install --upgrade pip \
-      && pip3 install j2cli[yaml]
-
-# Clean up
-RUN apk del ca-certificates
-
-# Verify installation
-RUN j2 --version
+      python2 \
+      py2-pip && \
+    pip2 install j2cli[yaml]
 
 RUN apk add --update bash && rm -rf /var/cache/apk/*
+
+RUN rm -rf /usr/share/nginx/html/*
 
 COPY --from=build /dist/fleetman-webapp /usr/share/nginx/html
 
