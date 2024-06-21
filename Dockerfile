@@ -16,10 +16,10 @@ FROM nginx:alpine
 RUN apk --no-cache add python3 py3-pip && \
     pip3 install j2cli[yaml]
 
-RUN apk --no-cache add \
-      python2 \
-      py2-pip && \
+RUN apk --no-cache add python2 py2-pip && \
     pip2 install j2cli[yaml]
+
+RUN apk add --update bash && rm -rf /var/cache/apk/*
 
 COPY --from=build /dist/fleetman-webapp /usr/share/nginx/html
 
