@@ -12,14 +12,9 @@ RUN npm run build --prod
 # Étape 2 : Utiliser une image nginx pour servir l'application Angular
 FROM nginx:1.14.0-alpine
 
-MAINTAINER Richard Chesterwood "richard@inceptiontraining.co.uk"
 
-RUN apk --no-cache add \
-      python2 \
-      py2-pip && \
-    pip2 install j2cli[yaml]
+RUN apk add --no-cache python2 g++ make
 
-RUN apk add --update bash && rm -rf /var/cache/apk/*
 
 RUN rm -rf /usr/share/nginx/html/*
 
