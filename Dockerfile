@@ -15,14 +15,14 @@ RUN npm run build --prod
 # Étape 2 : Utiliser une image nginx pour servir l'application Angular
 FROM nginx:1.14.0-alpine
 
+RUN apk --no-cache add \
+      python2 \
+      py2-pip && \
+    pip2 install j2cli[yaml]
 
-# Install python and pip
-RUN apk add --update py2-pip
+RUN apk add --update bash && rm -rf /var/cache/apk/*
 
-# install Python modules needed by the Python app
-
-RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org --no-cache-dir -r /usr/src/app/requirements.txt
-
+RUN rm -rf /usr/share/nginx/html/*
 # Copier le fichier de configuration Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
