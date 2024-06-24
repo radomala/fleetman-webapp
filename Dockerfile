@@ -12,8 +12,7 @@ RUN npm run build --prod
 # Étape 2 : Utiliser une image nginx pour servir l'application Angular
 FROM nginx:1.14.0-alpine
 
-
-RUN apk add --no-cache python2 g++ make
+apk add --update --no-cache curl py-pip
 
 
 RUN rm -rf /usr/share/nginx/html/*
